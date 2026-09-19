@@ -16,6 +16,13 @@
 
 ---
 
+---
+
+## Development Visualization
+
+<video src="https://github.com/itsdarklikehell/ProxmoxVE/assets/example.com/123456/gource.mp4" controls width="100%"></video>
+
+*Gource visualization showing the repository's commit history. See the [Gource workflow](.github/workflows/gource.yml) for details.*
 ## What is this?
 
 **Simplify your Proxmox VE setup with community-driven automation scripts.**
