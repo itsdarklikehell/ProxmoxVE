@@ -56,7 +56,7 @@ Pin:release a=testing
 Pin-Priority: 450
 EOF
     [[ -f /etc/apt/preferences.d/immich ]] && rm /etc/apt/preferences.d/immich
-    $STD apt update
+    apt_update_safe
     msg_ok "Added Debian Testing repo"
   fi
 
@@ -105,6 +105,7 @@ EOF
     libraries=("libjxl" "jpegli" "libheif" "libraw" "imagemagick" "libvips")
     cd "$BASE_DIR"
     msg_warn "Checking for updates to custom image-processing libraries (recompile time: 2-15min per library)"
+    ensure_dependencies liblcms2-dev libjpeg62-turbo-dev libspng-dev libexif-dev
     $STD git pull
     for library in "${libraries[@]}"; do
       compile_"$library"
@@ -322,7 +323,7 @@ EOF
     [[ ! -f "$GEO_DIR/countryInfo.txt" ]] && curl_with_retry "https://download.geonames.org/export/dump/countryInfo.txt" "countryInfo.txt"
     ln -s "${UPLOAD_DIR:-/opt/immich/upload}" "$APP_DIR"/upload
     ln -s "${UPLOAD_DIR:-/opt/immich/upload}" "$ML_DIR"/upload
-    ln -s "$GEO_DIR" "$APP_DIR"
+    ln -sfn "$GEO_DIR" "$APP_DIR/geodata"
     [[ ! -f /usr/bin/immich ]] && ln -sf "$APP_DIR"/cli/bin/immich /usr/bin/immich
     [[ ! -f /usr/bin/immich-admin ]] && ln -sf "$APP_DIR"/bin/immich-admin /usr/bin/immich-admin
 

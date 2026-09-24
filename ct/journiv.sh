@@ -38,11 +38,23 @@ function update_script() {
     msg_ok "Stopped Services"
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "journiv" "journiv/journiv-app" "tarball"
+    UV_PROJECT_DIR="/opt/journiv" setup_uv
 
     msg_info "Updating Python Environment"
     cd /opt/journiv
     $STD uv sync --locked --no-editable --no-install-project
     msg_ok "Updated Python Environment"
+
+    NODE_VERSION="24" setup_nodejs
+    msg_info "Building Frontend"
+    cd /opt/journiv/frontend
+    $STD npm ci
+    $STD npm run build
+    cd /opt/journiv
+    msg_ok "Built Frontend"
+
+    grep -q '^ALLOW_INSECURE_COOKIE_AUTH_OVER_HTTP=' /opt/journiv.env ||
+      echo 'ALLOW_INSECURE_COOKIE_AUTH_OVER_HTTP=true' >>/opt/journiv.env
 
     msg_info "Running Database Migrations"
     set -a

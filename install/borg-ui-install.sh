@@ -32,7 +32,7 @@ $STD apt install -y \
   sshpass
 msg_ok "Installed Dependencies"
 
-UV_PYTHON="3.12" setup_uv
+PYTHON_VERSION="3.12" setup_uv
 NODE_VERSION="22" setup_nodejs
 
 fetch_and_deploy_gh_release "borg-ui" "karanhudia/borg-ui" "tarball"
@@ -111,7 +111,7 @@ Type=simple
 User=root
 WorkingDirectory=/opt/borg-ui
 EnvironmentFile=/opt/borg-ui/.env
-ExecStart=/opt/borg-ui/.venv/bin/gunicorn app.main:app --bind 0.0.0.0:8081 --workers 2 --worker-class uvicorn.workers.UvicornWorker --timeout 300
+ExecStart=/opt/borg-ui/.venv/bin/gunicorn app.main:app --bind 0.0.0.0:8081 --workers 1 --worker-class uvicorn.workers.UvicornWorker --timeout 300
 Restart=on-failure
 RestartSec=5
 

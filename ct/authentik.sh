@@ -43,13 +43,12 @@ function update_script() {
   ensure_dependencies crossbuild-essential-$(arch_resolve) gcc-$(arch_resolve "x86-64" "aarch64")-linux-gnu cmake clang libunwind-18-dev
   msg_ok "Update dependencies"
 
-  NODE_VERSION="26" NODE_MODULE=pnpm@11 setup_nodejs
+  NODE_VERSION="26" NODE_MODULE=pnpm@12 setup_nodejs
   $STD uv cache clean
-  UV_PYTHON_INSTALL_DIR="/usr/local/bin" PYTHON_VERSION="3.14.7" setup_uv
   RUST_PROFILE="minimal" RUST_TOOLCHAIN="stable" setup_rust
   setup_yq
 
-  AUTHENTIK_VERSION="version/2026.8.2"
+  AUTHENTIK_VERSION="version/2026.8.3"
   # Source: https://github.com/goauthentik/fips/blob/main/Makefile#L26
   XMLSEC_VERSION="1.3.12"
 
@@ -95,6 +94,7 @@ function update_script() {
     fi
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "authentik" "goauthentik/authentik" "tarball" "${AUTHENTIK_VERSION}" "/opt/authentik"
+    UV_PYTHON_INSTALL_DIR="/usr/local/bin" PYTHON_VERSION="3.14.7" UV_PROJECT_DIR="/opt/authentik" setup_uv
     GO_VERSION="$(grep -m1 '^go ' /opt/authentik/go.mod | awk '{print $2}')" setup_go
 
     msg_info "Configuring rust"
@@ -106,7 +106,7 @@ function update_script() {
     msg_info "Updating web"
     export NODE_ENV="production"
 	  cd /opt/authentik
-	  $STD node ./scripts/node/lint-runtime.mjs ./web
+	  $STD node ./scripts/node/lint-runtime.ts ./web
 	  cd /opt/authentik/web
 	  $STD pnpm install --frozen-lockfile
 	  $STD pnpm run build
